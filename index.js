@@ -2,8 +2,10 @@
 * Simple demonstration of a neural net
 */
 
+'use strict';
+
 	// The current weights of the two cells
-var weights = [Math.random() * (1 + 1) - 1, Math.random() * (1 + 1) - 1],
+var weights = [Math.random(), Math.random()],
 	// counter for iterations
 	count = 0,
 	// The learning constant
@@ -20,15 +22,15 @@ var process = function(inputs, weights) {
 	var sum = 0;
 
 	for (var i = 0, length = inputs.length; i < length; i++) {
-		sum = sum + inputs[i] * weights[i];
+		sum += inputs[i] * weights[i];
 	}
 
 	return activate(sum);
 };
 
 var activate = function(sum) {
-	if (sum > 0) {
-		return 1.0;
+	if (sum - 1 > 0) {
+		return 1;
 	}
 
 	return 0
@@ -65,7 +67,10 @@ var createData = function() {
 console.log('Starting: ' + weights);
 
 // Apply algorithm until the conditions are met or it goes too long
-while (count < 20000000) {
+while (count < 1000000000) {
+	// Up the counter
+	count = count + 1;
+
 		// Generate a piece of data
 	var dataPiece = createData(),
 		// Find the current output of the net
@@ -73,13 +78,14 @@ while (count < 20000000) {
 		// Calculate the error
 		error = dataPiece.output - output;
 
-	// Now adjust each weight
-	for (var i = 0, length = 2; i < length; i++) {
-		weights[i] = weights[i] + error * dataPiece.inputs[i] * k;
+	if (error === 0) {
+		continue;
 	}
 
-	// Up the counter
-	count = count + 1;
+	// Now adjust each weight
+	for (var i = 0, length = 2; i < length; i++) {
+		weights[i] = weights[i] + dataPiece.inputs[i];
+	}
 }
 
 // Log out the final result
