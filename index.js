@@ -8,8 +8,9 @@
 var weights = [Math.random(), Math.random()],
 	// counter for iterations
 	count = 0,
-	// The learning constant
-	k = 0.1;
+	// How many adjustments we made
+	adjustments = 0,
+	k = 0.0001;
 
 /**
 * The processor node's function
@@ -30,10 +31,10 @@ var process = function(inputs, weights) {
 
 var activate = function(sum) {
 	if (sum - 1 > 0) {
-		return 1;
+		return 1.0;
 	}
 
-	return 0
+	return -1.0;
 };
 
 /**
@@ -51,14 +52,14 @@ var createData = function() {
 
 	// We're only going to generate an x and a y
 	for (var i = 0, length = 2; i < length; i++) {
-		data.inputs[i] = Math.random() * (1 + 1) - 1;
+		data.inputs[i] = Math.random() * 10 - 5;
 	}
 
 	// Calulate the output and append it
 	if (data.inputs[1] > 1) {
-		data.output = 1;
+		data.output = 1.0;
 	} else {
-		data.output = 0;
+		data.output = -1.0;
 	}
 
 	return data;
@@ -66,8 +67,7 @@ var createData = function() {
 
 console.log('Starting: ' + weights);
 
-// Apply algorithm until the conditions are met or it goes too long
-while (count < 1000000000) {
+while (count < 20000000) {
 	// Up the counter
 	count = count + 1;
 
@@ -80,13 +80,16 @@ while (count < 1000000000) {
 
 	if (error === 0) {
 		continue;
+	} else {
+		adjustments++;
 	}
 
-	// Now adjust each weight
-	for (var i = 0, length = 2; i < length; i++) {
-		weights[i] = weights[i] + dataPiece.inputs[i];
+	for (var i = 0, length = weights.length; i < length; i++) {
+		weights[i] = weights[i] + k * dataPiece.inputs[i] * error;
 	}
+
 }
 
 // Log out the final result
 console.log('Results: ' + weights);
+console.log('Adjustments made:' + adjustments);
