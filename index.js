@@ -10,7 +10,7 @@ var weights = [Math.random(), Math.random()],
 	count = 0,
 	// How many adjustments we made
 	adjustments = 0,
-	k = 0.0001;
+	k = 0.01;
 
 /**
 * The processor node's function
@@ -34,7 +34,7 @@ var activate = function(sum) {
 		return 1.0;
 	}
 
-	return -1.0;
+	return 0.0;
 };
 
 /**
@@ -59,7 +59,7 @@ var createData = function() {
 	if (data.inputs[1] > 1) {
 		data.output = 1.0;
 	} else {
-		data.output = -1.0;
+		data.output = 0.0;
 	}
 
 	return data;
@@ -67,7 +67,7 @@ var createData = function() {
 
 console.log('Starting: ' + weights);
 
-while (count < 20000000) {
+while (count < 2000000) {
 	// Up the counter
 	count = count + 1;
 
@@ -84,8 +84,14 @@ while (count < 20000000) {
 		adjustments++;
 	}
 
+	var sign = 1;
+
+	if (error < 0) {
+		sign = -1;
+	}
+
 	for (var i = 0, length = weights.length; i < length; i++) {
-		weights[i] = weights[i] + k * dataPiece.inputs[i] * error;
+		weights[i] = weights[i] + sign * k * dataPiece.inputs[i];
 	}
 
 }
