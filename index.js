@@ -5,19 +5,19 @@
 'use strict';
 
 	// The current weights of the two cells
-var weights = [Math.random(), Math.random()],
+	// [BedPrice, BathPrice, SquarePrice]
+var weights = [100, 100],
 	// counter for iterations
 	count = 0,
 	// How many adjustments we made
 	adjustments = 0,
-	k = 0.01;
+	k = 0.1;
 
 /**
 * The processor node's function
 * 
 * @param {[float]} Array of inputs
 * @param {[float]} Array of weights
-* @return {int} [output] A -1 or 1 if the point is above y = 1
 */
 var process = function(inputs, weights) {
 	var sum = 0;
@@ -26,48 +26,35 @@ var process = function(inputs, weights) {
 		sum += inputs[i] * weights[i];
 	}
 
-	return activate(sum);
-};
-
-var activate = function(sum) {
-	if (sum - 1 > 0) {
-		return 1.0;
-	}
-
-	return 0.0;
+	return sum;
 };
 
 /**
 * Creates a piece of data with the desired output
-* @return {
-*	x: float,
-*	y: float,
-*	output: -1 or 1
-* }
 */
 var createData = function() {
 	var data = {
-		inputs: []
+		inputs: [],
+		output: null
 	};
 
-	// We're only going to generate an x and a y
-	for (var i = 0, length = 2; i < length; i++) {
-		data.inputs[i] = Math.random() * 10 - 5;
-	}
+	// Generate a random number of rooms
+	var numBeds = Math.floor(Math.random() * (5 - 1 + 1) + 1),
+		numBaths = Math.floor(Math.random() * (3 - 1 + 1) + 1);
 
-	// Calulate the output and append it
-	if (data.inputs[1] > 1) {
-		data.output = 1.0;
-	} else {
-		data.output = 0.0;
-	}
+	data.inputs = [numBeds, numBaths];
+
+	// Get the unit prices
+	var bedUnitPrice = Math.floor(Math.random() * (950 - 750 + 1) + 750),
+		bathUnitPrice = Math.floor(Math.random() * (700 - 600 + 1) + 600);
+
+	// Calculate the price of the house based on the weights
+	data.output = numBeds * bedUnitPrice + numBaths * bathUnitPrice;
 
 	return data;
 };
 
-console.log('Starting: ' + weights);
-
-while (count < 2000000) {
+while (count < 10000000) {
 	// Up the counter
 	count = count + 1;
 
